@@ -12,7 +12,7 @@ function Header() {
   }, [path]);
 
   return (
-    <div className="flex p-4 items-center justify-between bg-secondary shadow-md">
+    <div className="flex px-40 py-4 items-center justify-between bg-secondary shadow-md">
       <div className="flex items-center gap-3">
         <Image src={"/logo.svg"} width={40} height={20} />
         <h1 className="text-2xl text-blue-600 font-bold">Intervur</h1>
