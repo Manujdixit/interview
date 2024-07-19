@@ -10,14 +10,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { chatSession } from "@/utils/GeminiAi";
+import { LoaderCircle } from "lucide-react";
 
 function AddNewInterview() {
   const [open, setOpen] = React.useState(false);
   const [jobposition, setJobposition] = useState("");
   const [jobdescription, setJobdescription] = useState("");
   const [jobexperience, setJobexperience] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [jsonresponse, setJsonresponse] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     const interviewData = {
       jobposition,
@@ -25,7 +30,31 @@ function AddNewInterview() {
       jobexperience,
     };
     console.log(interviewData);
-    setOpen(false);
+
+    const InputPrompt =
+      "Job position: " +
+      jobposition +
+      ", Job Description: " +
+      jobdescription +
+      ", Years of Experience : " +
+      jobexperience +
+      ", Depends on Job Position, Job Description & Years of Experience give us " +
+      process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT +
+      " Interview question along with Answer in JSON format, Give us question and answer field on JSON";
+
+    const result = await chatSession.sendMessage(InputPrompt);
+
+    const input = result.response.text();
+
+    function extractJson(text) {
+      const match = text.match(/```json\n([\s\S]*?)\n```/);
+      return match ? match[1] : null;
+    }
+
+    const mockjson = extractJson(input);
+    // console.log(JSON.parse(mockjson));
+    setJsonresponse(mockjson);
+    setLoading(false);
   };
 
   return (
@@ -85,7 +114,16 @@ function AddNewInterview() {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit">Start Interview</Button>
+                  <Button disabled={loading} type="submit">
+                    {loading ? (
+                      <>
+                        <LoaderCircle className="animate-spin" />
+                        "Generating from AI"
+                      </>
+                    ) : (
+                      "Start Interview"
+                    )}
+                  </Button>
                 </div>
               </form>
             </DialogDescription>
