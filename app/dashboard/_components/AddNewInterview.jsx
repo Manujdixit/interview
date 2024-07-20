@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { chatSession } from "@/utils/GeminiAi";
 import { LoaderCircle } from "lucide-react";
+import { createInterview } from "@/app/actions/createInterview";
+import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 function AddNewInterview() {
   const [open, setOpen] = React.useState(false);
@@ -20,41 +23,66 @@ function AddNewInterview() {
   const [jobexperience, setJobexperience] = useState("");
   const [loading, setLoading] = useState(false);
   const [jsonresponse, setJsonresponse] = useState("");
-
+  const router = useRouter();
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-    const interviewData = {
-      jobposition,
-      jobdescription,
-      jobexperience,
-    };
-    console.log(interviewData);
 
-    const InputPrompt =
-      "Job position: " +
-      jobposition +
-      ", Job Description: " +
-      jobdescription +
-      ", Years of Experience : " +
-      jobexperience +
-      ", Depends on Job Position, Job Description & Years of Experience give us " +
-      process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT +
-      " Interview question along with Answer in JSON format, Give us question and answer field on JSON";
+    try {
+      const InputPrompt =
+        "Job position: " +
+        jobposition +
+        ", Job Description: " +
+        jobdescription +
+        ", Years of Experience : " +
+        jobexperience +
+        ", Depends on Job Position, Job Description & Years of Experience give us " +
+        process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT +
+        " Interview question along with Answer in JSON format, Give us question and answer field on JSON";
 
-    const result = await chatSession.sendMessage(InputPrompt);
+      const result = await chatSession.sendMessage(InputPrompt);
+      const input = result.response.text();
 
-    const input = result.response.text();
+      function extractJson(text) {
+        const match = text.match(/```json\n([\s\S]*?)\n```/);
+        return match ? match[1] : null;
+      }
 
-    function extractJson(text) {
-      const match = text.match(/```json\n([\s\S]*?)\n```/);
-      return match ? match[1] : null;
+      const mockjson = extractJson(input);
+      console.log(mockjson);
+
+      const mockId = uuidv4();
+      // console.log(mockId);
+      // console.log(typeof mockId);
+
+      // Create FormData for server action
+      const formData = new FormData();
+      formData.append("jobposition", jobposition);
+      formData.append("jobdescription", jobdescription);
+      formData.append("jobexperience", jobexperience);
+      formData.append("questions", mockjson);
+      formData.append("mockId", mockId);
+
+      console.log(formData);
+
+      const response = await createInterview(formData);
+
+      if (response.success) {
+        setJsonresponse(mockjson);
+        setOpen(false);
+        // console.log("interview saved successfully", response.data.mockId);
+        // console.log(`/dashboard/interview/${response.data.mockId}`);
+
+        router.push("/dashboard/interview/" + response?.data.mockId);
+      } else {
+        console.error("Error saving interview:", response.error);
+        alert(`error: ${response.error}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
-
-    const mockjson = extractJson(input);
-    // console.log(JSON.parse(mockjson));
-    setJsonresponse(mockjson);
-    setLoading(false);
   };
 
   return (
@@ -65,7 +93,7 @@ function AddNewInterview() {
       >
         <h2 className="text-lg text-center">+ Add New</h2>
       </div>
-      <Dialog open={open}>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl">
