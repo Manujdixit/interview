@@ -20,12 +20,28 @@ datasource db {
 }
 
 model MockInterview {
-  id             String   @id @default(cuid())
+  id             String      @id @default(cuid())
   jsonMockResp   String
   jobPosition    String
   jobDescription String
   jobExperience  String
   createdBy      String
-  createdAt      DateTime @default(now())
-  mockId         String   @default(cuid())
+  createdAt      DateTime    @default(now())
+  mockId         String      @unique @default(cuid())
+  userAnswer     UserAnswer?
+}
+
+model UserAnswer {
+  id            String        @id @default(cuid())
+  mockInterview MockInterview @relation(fields: [mockIdRef], references: [mockId])
+  mockIdRef     String        @unique
+  question      String
+  correctAns    String?
+  userAns       String?
+  feedback      String?
+  rating        String?
+  userEmail     String?
+  createdAt     DateTime?
+
+  mockInterviewId String
 }
