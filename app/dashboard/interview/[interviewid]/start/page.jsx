@@ -9,7 +9,7 @@ import Link from "next/link";
 function StartInterview({ params }) {
   const [interviewdata, setInterviewdata] = useState(null);
   const [mockinterviewquestion, setMockinterviewquestion] = useState(null);
-  const [activequestionindex, setActivequestionindex] = useState(1);
+  const [activequestionindex, setActivequestionindex] = useState(0);
 
   useEffect(() => {
     async function fetchInterview() {
