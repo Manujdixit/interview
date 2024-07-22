@@ -49,7 +49,7 @@ function AddNewInterview() {
       }
 
       const mockjson = extractJson(input);
-      console.log(mockjson);
+      // console.log(mockjson);
 
       const mockId = uuidv4();
       // console.log(mockId);
@@ -63,7 +63,7 @@ function AddNewInterview() {
       formData.append("questions", mockjson);
       formData.append("mockId", mockId);
 
-      console.log(formData);
+      // console.log(formData);
 
       const response = await createInterview(formData);
 

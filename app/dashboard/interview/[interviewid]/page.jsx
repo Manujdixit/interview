@@ -19,7 +19,7 @@ function Interview({ params }) {
   }, []);
 
   if (!interviewdata) return <div>Loading...</div>;
-  console.log(interviewdata);
+  // console.log(interviewdata);
 
   return (
     <>
