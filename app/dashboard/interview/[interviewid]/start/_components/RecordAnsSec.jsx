@@ -46,25 +46,25 @@ function RecordAnsSec({
     );
     if (!isRecording && useranser.length > 1) {
       UpdateUserAnswer();
-      console.log("Calling UpdateUserAnswer from useEffect");
+      // console.log("Calling UpdateUserAnswer from useEffect");
     }
   }, [useranser, isRecording]);
 
   const StartStopRecording = async () => {
     if (isRecording) {
-      console.log("Stopping speech to text");
+      // console.log("Stopping speech to text");
       stopSpeechToText();
-      console.log("Speech to text stopped");
+      // console.log("Speech to text stopped");
     } else {
-      console.log("Starting speech to text");
+      // console.log("Starting speech to text");
       startSpeechToText();
     }
   };
 
   const UpdateUserAnswer = async () => {
-    console.log("UpdateUserAnswer called");
+    // console.log("UpdateUserAnswer called");
     try {
-      console.log(useranser);
+      // console.log(useranser);
       setLoading(true);
       const feedbackPrompt = `Question: ${mockinterviewquestion[activequestionindex]?.question}, User answer: ${useranser}, depends on question and user answer for given interview question, please give us rating and feedback as area of improvement if any in just 3 to 5 lines to improve it in JSON format with rating field and feedback field.`;
 
@@ -79,14 +79,14 @@ function RecordAnsSec({
       const mockjson = extractJson(
         input.response.candidates[0].content.parts[0].text
       );
-      console.log(mockjson);
+      // console.log(mockjson);
       const jsonfeedbackresponse = JSON.parse(mockjson);
 
-      console.log(interviewdata);
-      console.log(mockinterviewquestion);
-      console.log(activequestionindex);
-      console.log(useranser);
-      console.log(jsonfeedbackresponse);
+      // console.log(interviewdata);
+      // console.log(mockinterviewquestion);
+      // console.log(activequestionindex);
+      // console.log(useranser);
+      // console.log(jsonfeedbackresponse);
 
       const formData = new FormData();
       formData.append("mockIdRef", interviewdata.mockId);
