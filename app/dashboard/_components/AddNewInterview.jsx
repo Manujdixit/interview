@@ -24,6 +24,7 @@ function AddNewInterview() {
   const [loading, setLoading] = useState(false);
   const [jsonresponse, setJsonresponse] = useState("");
   const router = useRouter();
+
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
@@ -65,18 +66,40 @@ function AddNewInterview() {
 
       // console.log(formData);
 
-      const response = await createInterview(formData);
+      //     const response = await createInterview(formData);
 
-      if (response.success) {
+      //     if (response.success) {
+      //       setJsonresponse(mockjson);
+      //       setOpen(false);
+      //       // console.log("interview saved successfully", response.data.mockId);
+      //       // console.log(`/dashboard/interview/${response.data.mockId}`);
+
+      //       router.push("/dashboard/interview/" + response?.data.mockId);
+      //     } else {
+      //       console.error("Error saving interview:", response.error);
+      //       alert(`error: ${response.error}`);
+      //     }
+      //   } catch (error) {
+      //     console.error("Error:", error);
+      //   } finally {
+      //     setLoading(false);
+      //   }
+      // };
+      // Use fetch to call the API route
+      const response = await fetch("/api/createInterview", {
+        method: "POST",
+        body: formData,
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.success) {
         setJsonresponse(mockjson);
         setOpen(false);
-        // console.log("interview saved successfully", response.data.mockId);
-        // console.log(`/dashboard/interview/${response.data.mockId}`);
-
-        router.push("/dashboard/interview/" + response?.data.mockId);
+        router.push("/dashboard/interview/" + responseData.data.mockId);
       } else {
-        console.error("Error saving interview:", response.error);
-        alert(`error: ${response.error}`);
+        console.error("Error saving interview:", responseData.error);
+        alert(`error: ${responseData.error}`);
       }
     } catch (error) {
       console.error("Error:", error);

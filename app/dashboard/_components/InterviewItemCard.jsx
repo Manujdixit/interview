@@ -2,7 +2,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 function InterviewItemCard({ interview }) {
-  console.log(interview);
+  // console.log(interview);
 
   const formattedDate = new Date(interview.createdAt).toLocaleDateString();
 
